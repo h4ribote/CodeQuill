@@ -1,21 +1,23 @@
-# models.py
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Table
+import uuid
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Table, LargeBinary
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from database import Base
 
-# Association table for the many-to-many relationship between articles and tags
+def generate_uuid():
+    return uuid.uuid4().bytes
+
 article_tags = Table('article_tags', Base.metadata,
-    Column('article_id', Integer, ForeignKey('articles.id'), primary_key=True),
+    Column('article_id', LargeBinary, ForeignKey('articles.id'), primary_key=True),
     Column('tag_id', Integer, ForeignKey('tags.id'), primary_key=True)
 )
 
 class Article(Base):
     __tablename__ = "articles"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(LargeBinary, primary_key=True, default=generate_uuid)
     title = Column(String, index=True)
-    file_path = Column(String, unique=True)
+    content = Column(LargeBinary, nullable=False)
     view_count = Column(Integer, default=0)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 

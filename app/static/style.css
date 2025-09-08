@@ -18,13 +18,35 @@ body {
 }
 
 .container {
-    max-width: 800px;
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 0 15px;
+    padding: 20px 15px;
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
 }
 
-.main-content {
-    padding: 40px 0;
+.main-column {
+    flex: 3;
+    min-width: 0;
+}
+
+.sidebar {
+    flex: 1;
+    position: sticky;
+    top: 20px;
+    min-width: 250px;
+}
+
+@media (max-width: 900px) {
+    .container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .sidebar {
+        position: static;
+        margin-top: 30px;
+    }
 }
 
 .post {
@@ -123,4 +145,47 @@ pre:hover .copy-button {
 
 .copy-button:hover {
     background-color: #555;
+}
+
+.related-articles {
+    background-color: var(--main-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.related-articles h2 {
+    font-size: 20px;
+    margin-top: 0;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.related-articles ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.related-articles li {
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.related-articles li:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.related-articles a {
+    text-decoration: none;
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.related-articles a:hover {
+    color: var(--accent-color);
 }

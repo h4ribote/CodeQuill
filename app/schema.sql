@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS articles (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id BINARY(16) PRIMARY KEY,
     title TEXT NOT NULL,
-    file_path TEXT NOT NULL UNIQUE,
+    content BLOB NOT NULL,
     view_count INTEGER DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS tags (
 );
 
 CREATE TABLE IF NOT EXISTS article_tags (
-    article_id INTEGER,
+    article_id BINARY(16),
     tag_id INTEGER,
     PRIMARY KEY (article_id, tag_id),
     FOREIGN KEY (article_id) REFERENCES articles(id) ON DELETE CASCADE,

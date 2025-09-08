@@ -1,10 +1,10 @@
 import uuid
-import shutil
+import zlib
 from typing import List
 from fastapi import FastAPI, File, UploadFile, Depends, HTTPException, status
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
-from sqlalchemy.orm import Session
+from fastapi.responses import FileResponse, HTMLResponse
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func, desc
 import uvicorn
 from bs4 import BeautifulSoup
@@ -33,8 +33,7 @@ async def upload_article(
         raise HTTPException(status_code=400, detail="Invalid file type. Only .html files are allowed.")
 
     contents = await file.read()
-    await file.seek(0)
-
+    
     soup = BeautifulSoup(contents, 'lxml')
 
     title_tag = soup.find('title')
@@ -45,21 +44,16 @@ async def upload_article(
     meta_keywords = soup.find('meta', attrs={'name': 'keywords'})
     if not meta_keywords or not meta_keywords.get('content'):
         raise HTTPException(status_code=400, detail="HTML file must have a <meta name=\"keywords\"> tag with content.")
-    tags = meta_keywords.get('content', '').strip()
+    tags_str = meta_keywords.get('content', '').strip()
 
-    file_extension = ".html"
-    unique_filename = f"{uuid.uuid4().hex}{file_extension}"
-    file_path = f"static/articles/{unique_filename}"
+    compressed_content = zlib.compress(contents)
 
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-
-    new_article = models.Article(title=title, file_path=file_path)
+    new_article = models.Article(title=title, content=compressed_content)
     db.add(new_article)
     db.commit()
     db.refresh(new_article)
 
-    tag_names = [tag.strip().lower() for tag in tags.split(',') if tag.strip()]
+    tag_names = [tag.strip().lower() for tag in tags_str.split(',') if tag.strip()]
     for tag_name in tag_names:
         tag = db.query(models.Tag).filter(models.Tag.name == tag_name).first()
         if not tag:
@@ -71,13 +65,17 @@ async def upload_article(
     
     db.commit()
     
-    return {"id": new_article.id, "title": new_article.title, "file_path": new_article.file_path}
+    return {"id": new_article.id.hex(), "title": new_article.title}
 
 
-@app.get("/articles/{filename}")
-async def view_article_by_filename(filename: str, db: Session = Depends(database.get_db)):
-    file_path = f"static/articles/{filename}"
-    article = db.query(models.Article).filter(models.Article.file_path == file_path).first()
+@app.get("/articles/{article_id}", response_class=HTMLResponse)
+async def view_article_by_id(article_id: str, db: Session = Depends(database.get_db)):
+    try:
+        article_id_bytes = bytes.fromhex(article_id)
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Invalid article ID format")
+
+    article = db.query(models.Article).options(joinedload(models.Article.tags)).filter(models.Article.id == article_id_bytes).first()
     if not article:
         raise HTTPException(status_code=404, detail="Article not found")
 
@@ -88,7 +86,35 @@ async def view_article_by_filename(filename: str, db: Session = Depends(database
         
     db.commit()
     
-    return FileResponse(article.file_path)
+    decompressed_content = zlib.decompress(article.content)
+    return HTMLResponse(content=decompressed_content)
+
+
+@app.get("/api/articles/{article_id}/related/")
+async def get_related_articles(article_id: str, limit: int = 5, db: Session = Depends(database.get_db)):
+    try:
+        article_id_bytes = bytes.fromhex(article_id)
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Invalid article ID format")
+
+    article = db.query(models.Article).options(joinedload(models.Article.tags)).filter(models.Article.id == article_id_bytes).first()
+    if not article:
+        raise HTTPException(status_code=404, detail="Article not found")
+
+    tag_ids = [tag.id for tag in article.tags]
+    if not tag_ids:
+        return []
+
+    related_articles = db.query(models.Article)\
+        .join(models.article_tags)\
+        .filter(models.article_tags.c.tag_id.in_(tag_ids))\
+        .filter(models.Article.id != article_id_bytes)\
+        .distinct()\
+        .order_by(desc(models.Article.created_at))\
+        .limit(limit)\
+        .all()
+    
+    return [{"id": a.id.hex(), "title": a.title} for a in related_articles]
 
 
 @app.get("/api/articles/search/")
@@ -98,7 +124,7 @@ async def search_articles(query: str, db: Session = Depends(database.get_db)):
         (models.Article.tags.any(models.Tag.name.ilike(f"%{query}%")))
     ).all()
     
-    return [{"id": a.id, "title": a.title, "file_path": a.file_path} for a in articles]
+    return [{"id": a.id.hex(), "title": a.title} for a in articles]
 
 
 @app.get("/api/articles/recommended/")
@@ -116,13 +142,13 @@ async def get_recommended_articles(limit: int = 5, db: Session = Depends(databas
         .limit(limit)\
         .all()
         
-    return [{"id": a.id, "title": a.title, "file_path": a.file_path} for a in recommended_articles]
+    return [{"id": a.id.hex(), "title": a.title} for a in recommended_articles]
 
 
 @app.get("/api/articles/random/")
 async def get_random_articles(limit: int = 5, db: Session = Depends(database.get_db)):
     random_articles = db.query(models.Article).order_by(func.random()).limit(limit).all()
-    return [{"id": a.id, "title": a.title, "file_path": a.file_path} for a in random_articles]
+    return [{"id": a.id.hex(), "title": a.title} for a in random_articles]
 
 if __name__ == "__main__":
     uvicorn.run(app=app, host="0.0.0.0", port=28100)
