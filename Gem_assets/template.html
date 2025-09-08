@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="タグ1,タグ2,タグ3">
+    <title>ここに記事のタイトルが入ります</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <main class="main-content">
+        <div class="container">
+            <article class="post">
+                <header class="post-header">
+                    <h1>ここに記事のタイトルが入ります</h1>
+                    <div class="post-tags">
+                        <span class="tag">タグ1</span>
+                        <span class="tag">タグ2</span>
+                        <span class="tag">タグ3</span>
+                    </div>
+                </header>
+
+                <section class="post-body">
+                    <p class="summary">ここに記事の短い概要が入ります。</p>
+                    
+                    <h2>セクション1の見出し</h2>
+                    <p>ここにはセクション1の本文が入ります。テキストや説明を記述します。</p>
+
+                    <h3>サブセクションの見出し</h3>
+                    <p>より詳細な説明をここに記述します。コード例を以下に示します。</p>
+
+                    <pre><code class="language-ruby">
+# sample.rb
+class Greeter
+  def initialize(name)
+    @name = name
+  end
+
+  def greet
+    "Hello, #{@name}!"
+  end
+end
+
+puts Greeter.new("World").greet
+                    </code></pre>
+
+                    <h2>セクション2の見出し</h2>
+                    <p>リストを使った説明は以下のようになります。</p>
+                    <ul>
+                        <li>リスト項目1</li>
+                        <li>リスト項目2</li>
+                        <li>リスト項目3</li>
+                    </ul>
+
+                </section>
+            </article>
+        </div>
+    </main>
+
+    <script src="/static/script.js" defer></script>
+</body>
+</html>

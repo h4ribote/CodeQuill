@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Article Hub</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+        }
+        .container {
+            max-width: 960px;
+        }
+        .hub-header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+        .hub-section {
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .hub-section h2 {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .article-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .article-list li {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .article-list li:last-child {
+            border-bottom: none;
+        }
+        .article-list a {
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        .article-list a:hover {
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="hub-header">
+            <h1>Tech Article Hub</h1>
+            <p>Your central place for technical articles.</p>
+        </header>
+
+        <section id="upload-section" class="hub-section">
+            <h2>Upload New Article</h2>
+            <form id="upload-form">
+                <p>Select an HTML file to upload. The title and tags will be automatically extracted from the file's metadata.</p>
+                <input type="file" id="file" name="file" accept=".html" required>
+                <button type="submit">Upload</button>
+            </form>
+            <p id="upload-status" style="margin-top: 15px;"></p>
+        </section>
+
+        <section id="search-section" class="hub-section">
+            <h2>Search Articles</h2>
+            <form id="search-form">
+                <input type="text" id="search-query" placeholder="Search by title or tag...">
+                <button type="submit">Search</button>
+            </form>
+            <div id="search-results-container" style="margin-top: 20px;">
+                <h3>Results</h3>
+                <ul id="search-results" class="article-list"></ul>
+            </div>
+        </section>
+
+        <section id="recommended-section" class="hub-section">
+            <h2>Recommended For You</h2>
+            <ul id="recommended-articles" class="article-list"></ul>
+        </section>
+
+        <section id="random-section" class="hub-section">
+            <h2>Random Articles</h2>
+            <ul id="random-articles" class="article-list"></ul>
+        </section>
+
+    </div>
+    <script src="/static/index.js"></script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+:root {
+    --primary-color: #333;
+    --background-color: #f8f9fa;
+    --main-bg-color: #fff;
+    --border-color: #e9ecef;
+    --accent-color: #55c500;
+    --code-bg-color: #2d2d2d;
+    --code-font-color: #f8f8f2;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Helvetica Neue", Arial, Meiryo, sans-serif;
+    line-height: 1.7;
+    color: var(--primary-color);
+    background-color: var(--background-color);
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.main-content {
+    padding: 40px 0;
+}
+
+.post {
+    background-color: var(--main-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 40px;
+}
+
+.post-header h1 {
+    font-size: 32px;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.post-tags {
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.tag {
+    display: inline-block;
+    background-color: #e9ecef;
+    color: #495057;
+    padding: 4px 10px;
+    border-radius: 15px;
+    margin-right: 8px;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.post-body .summary {
+    font-style: italic;
+    color: #6c757d;
+    border-left: 3px solid var(--border-color);
+    padding-left: 15px;
+    margin-bottom: 30px;
+}
+
+.post-body h2 {
+    font-size: 24px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+.post-body h3 {
+    font-size: 20px;
+    border-left: 4px solid var(--accent-color);
+    padding-left: 10px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+.post-body p {
+    margin-bottom: 16px;
+}
+
+.post-body ul, .post-body ol {
+    padding-left: 20px;
+}
+
+.post-body pre {
+    background-color: var(--code-bg-color);
+    color: var(--code-font-color);
+    padding: 20px;
+    border-radius: 5px;
+    overflow-x: auto;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    font-size: 14px;
+    position: relative; 
+}
+
+.post-body code {
+    font-family: inherit;
+}
+
+.copy-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #444;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+pre:hover .copy-button {
+    opacity: 1;
+}
+
+.copy-button:hover {
+    background-color: #555;
+}
